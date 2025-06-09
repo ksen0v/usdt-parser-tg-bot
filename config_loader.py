@@ -23,7 +23,8 @@ def load_config():
         "monitoring_isrun": "Мониторинг кошелька {address} запущен",
         "monitoring_isstop": "Мониторинг кошелька {address} остановлен",
         "tasks_list": "Список запущенных мониторингов\n\n{tasks_list}",
-        "all_monitoring_isstop": "Все мониторинги остановлены"
+        "all_monitoring_isstop": "Все мониторинги остановлены",
+        "no_active_tasks": "Активных мониторингов нет"
     }
 }
 
