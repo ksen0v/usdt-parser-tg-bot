@@ -38,14 +38,14 @@ async def get_wallet_details(address):
 async def parse_wallet_details(data_json):
     data = json.loads(data_json)
 
-    last_transaction = await get_wallet_history(data['data'][0]['hash'], 1, 1)
+    last_transaction = await get_wallet_history(data['data'][0]['hash'], 1, 2)
     
 
     wallet = Wallet(data['data'][0]['hash'],
                     data['data'][0]['network'],
                     data['data'][0]['balance'],
                     data['data'][0]['txCount'],
-                    last_transaction
+                    last_transaction[0]['txid']
                     )
 
     return wallet
@@ -112,13 +112,14 @@ async def spy_start(message: Message, address):
                 new_transactions_all.extend(new_transactions)
                 last_transaction = new_transactions[0]['txid']
             
-            for transaction in reversed(new_transactions):
-                await message.answer(str(MESSAGES['new_transaction']).format(address = address, 
-                                                                             hash = transaction['txid'], 
-                                                                             network = transaction['network'], 
-                                                                             utc_time = await convert_utc_time(transaction['time']),
-                                                                             wallet_from = transaction['from'],
-                                                                             usdt_value = await convert_usdt_value(int(transaction['value']))))
+            for transaction in new_transactions:
+                if transaction['from'] != address:
+                    await message.answer(str(MESSAGES['new_transaction']).format(address = address, 
+                                                                                hash = transaction['txid'], 
+                                                                                network = transaction['network'], 
+                                                                                utc_time = await convert_utc_time(transaction['time']),
+                                                                                wallet_from = transaction['from'],
+                                                                                usdt_value = await convert_usdt_value(int(transaction['value']))))
         else:
             if NOTIFICATIONS:
                 await message.answer(str(MESSAGES['no_new_transactions']).format(address = address))
